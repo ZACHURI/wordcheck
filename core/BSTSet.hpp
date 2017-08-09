@@ -68,37 +68,62 @@ public:
 
 
 private:
+	int bs_size;
+	struct Node
+	{
+		int key_value;
+		Node *left;
+		Node *right;
+	};
+	Node *head;
+
+	void copyBST(Node*& newtree, Node* oldtree);
+	void addBST(const T& element, Node*& head);
+	bool containsBST(const T& element, Node*& head)
+	void deleteBST(Node* head);
+
 
 };
 
 
 template <typename T>
 BSTSet<T>::BSTSet()
+	: head{nullptr}, bs_size{0}
 {
+
 }
 
 
 template <typename T>
 BSTSet<T>::~BSTSet()
 {
+	deleteBST(head);
+	
 }
 
 
 template <typename T>
 BSTSet<T>::BSTSet(const BSTSet& s)
 {
+	//copy every thing
+	copyBST(head, s.head);
+
+
 }
 
 
 template <typename T>
 BSTSet<T>::BSTSet(BSTSet&& s)
 {
+	copyBST(head, s.head);
 }
 
 
 template <typename T>
 BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
 {
+	bs_size = s.bs_size;
+	copyBST(head, s.head);
     return *this;
 }
 
@@ -106,6 +131,8 @@ BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
 template <typename T>
 BSTSet<T>& BSTSet<T>::operator=(BSTSet&& s)
 {
+	bs_size = s.bs_size;
+	copyBST(head, s.head);
     return *this;
 }
 
@@ -120,6 +147,7 @@ bool BSTSet<T>::isImplemented() const
 template <typename T>
 void BSTSet<T>::add(const T& element)
 {
+
 }
 
 
@@ -133,9 +161,74 @@ bool BSTSet<T>::contains(const T& element) const
 template <typename T>
 unsigned int BSTSet<T>::size() const
 {
-    return 0;
+    return bs_size;
 }
 
+template <typename T>
+void addBST(const T& element, Node*& head)
+{
+	if (head == nullptr)
+	{
+		head = new Node{element, nullptr, nullptr};
+		++sz;
+	}
+	else if ( element < head->key )
+	{
+		addBST(element, head->left);
+	}
+	else if ( element > head->key )
+	{
+		addBST(element, head->right);
+	}
+
+}
+
+template <typename T>
+bool containsBST(const T& element, Node*& head)
+{
+	if (head == nullptr)
+	{
+		return false;
+	}
+	else if ( element < head->key )
+	{
+		addBST(element, head->left);
+	}
+	else if ( element > head->key )
+	{
+		addBST(element, head->right);
+	}
+	else
+	{
+		return true;
+	}
+
+}
+
+template <typename T>
+void BSTSet<T>::copyBST(Node*& newtree, Node* oldtree)
+{
+	if ( oldtree == nullptr )
+	{
+		newtree = nullptr;
+	}
+	else
+	{
+		newtree = new Node{oldtree->key_value, oldtree->left, oldtree->right};
+		copyBST(newtree->left, oldtree->left);
+		copyBST(newtree->right, newtree->right);
+	}
+
+template <typename T>
+void BSTSet<T>::deleteBST(Node* head)
+{
+	if (head != nullptr)
+	{
+		deleteBST(head->right);
+		deleteBST(head->left);
+		delete head;
+	}
+}
 
 
 #endif // BSTSET_HPP

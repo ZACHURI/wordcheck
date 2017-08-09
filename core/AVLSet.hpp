@@ -73,6 +73,7 @@ private:
 template <typename T>
 AVLSet<T>::AVLSet()
 {
+	
 }
 
 
