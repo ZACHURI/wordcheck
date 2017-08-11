@@ -67,11 +67,26 @@ public:
 
 private:
 
+	int av_size;
+	struct Node
+	{
+		int key_value;
+		Node *left;
+		Node *right;
+	};
+	Node *head;
+
+	void copyAVT(Node*& newtree, Node* oldtree);
+	void addAVT(const T& element, Node*& head);
+	bool containsAVT(const T& element, Node*& head)
+	void deleteAVT(Node* head);
+
 };
 
 
 template <typename T>
 AVLSet<T>::AVLSet()
+	: head{nullptr}, av_size{0}
 {
 	
 }
@@ -80,24 +95,29 @@ AVLSet<T>::AVLSet()
 template <typename T>
 AVLSet<T>::~AVLSet()
 {
+	deleteAVT(head);
 }
 
 
 template <typename T>
 AVLSet<T>::AVLSet(const AVLSet& s)
 {
+	copyAVT(head, s.head);
 }
 
 
 template <typename T>
 AVLSet<T>::AVLSet(AVLSet&& s)
 {
+	copyAVT(head, s.head);
 }
 
 
 template <typename T>
 AVLSet<T>& AVLSet<T>::operator=(const AVLSet& s)
 {
+	av_size = s.av_size;
+	copyAVT(head, s.head);
     return *this;
 }
 
@@ -105,6 +125,8 @@ AVLSet<T>& AVLSet<T>::operator=(const AVLSet& s)
 template <typename T>
 AVLSet<T>& AVLSet<T>::operator=(AVLSet&& s)
 {
+	av_size = s.av_size;
+	copyAVT(head, s.head);
     return *this;
 }
 
@@ -119,6 +141,7 @@ bool AVLSet<T>::isImplemented() const
 template <typename T>
 void AVLSet<T>::add(const T& element)
 {
+	addAVT( element, head);
 }
 
 
@@ -132,9 +155,75 @@ bool AVLSet<T>::contains(const T& element) const
 template <typename T>
 unsigned int AVLSet<T>::size() const
 {
-    return 0;
+    return av_size;
 }
 
+
+template <typename T>
+void addAVT(const T& element, Node*& head)
+{
+	if (head == nullptr)
+	{
+		head = new Node{element, nullptr, nullptr};
+		++bs_size;
+	}
+	else if ( element < head->key )
+	{
+		addAVT(element, head->left);
+	}
+	else if ( element > head->key )
+	{
+		addAVT(element, head->right);
+	}
+
+}
+
+template <typename T>
+bool containsAVT(const T& element, Node*& head)
+{
+	if (head == nullptr)
+	{
+		return false;
+	}
+	else if ( element < head->key )
+	{
+		addAVT(element, head->left);
+	}
+	else if ( element > head->key )
+	{
+		addAVT(element, head->right);
+	}
+	else
+	{
+		return true;
+	}
+
+}
+
+template <typename T>
+void BSTSet<T>::copyAVT(Node*& newtree, Node* oldtree)
+{
+	if ( oldtree == nullptr )
+	{
+		newtree = nullptr;
+	}
+	else
+	{
+		newtree = new Node{oldtree->key_value, oldtree->left, oldtree->right};
+		copyAVT(newtree->left, oldtree->left);
+		copyAVT(newtree->right, newtree->right);
+	}
+
+template <typename T>
+void BSTSet<T>::deleteAVT(Node* head)
+{
+	if (head != nullptr)
+	{
+		deleteAVT(head->right);
+		deleteAVT(head->left);
+		delete head;
+	}
+}
 
 
 #endif // AVLSET_HPP

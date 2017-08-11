@@ -147,7 +147,7 @@ bool BSTSet<T>::isImplemented() const
 template <typename T>
 void BSTSet<T>::add(const T& element)
 {
-
+	addBST( element, head);
 }
 
 
@@ -170,7 +170,7 @@ void addBST(const T& element, Node*& head)
 	if (head == nullptr)
 	{
 		head = new Node{element, nullptr, nullptr};
-		++sz;
+		++bs_size;
 	}
 	else if ( element < head->key )
 	{
