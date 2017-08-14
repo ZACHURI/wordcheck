@@ -68,18 +68,20 @@ public:
 
 
 private:
-	int bs_size;
 	struct Node
 	{
 		int key_value;
 		Node *left;
 		Node *right;
 	};
-	Node *head;
 
+
+	Node* head;
+
+	int sizeBST(Node* head);
 	void copyBST(Node*& newtree, Node* oldtree);
 	void addBST(const T& element, Node*& head);
-	bool containsBST(const T& element, Node*& head)
+	bool containsBST(const T& element, Node*& head);
 	void deleteBST(Node* head);
 
 
@@ -88,7 +90,7 @@ private:
 
 template <typename T>
 BSTSet<T>::BSTSet()
-	: head{nullptr}, bs_size{0}
+	: head{nullptr}
 {
 
 }
@@ -97,13 +99,14 @@ BSTSet<T>::BSTSet()
 template <typename T>
 BSTSet<T>::~BSTSet()
 {
-	deleteBST(head);
+	destroyBST(head);
 	
 }
 
 
 template <typename T>
 BSTSet<T>::BSTSet(const BSTSet& s)
+	: head{nullptr}
 {
 	//copy every thing
 	copyBST(head, s.head);
@@ -114,16 +117,21 @@ BSTSet<T>::BSTSet(const BSTSet& s)
 
 template <typename T>
 BSTSet<T>::BSTSet(BSTSet&& s)
+	: head{nullptr}
 {
-	copyBST(head, s.head);
+	std::swap(head, s.head);
 }
 
 
 template <typename T>
 BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
 {
-	bs_size = s.bs_size;
-	copyBST(head, s.head);
+	if (this != &s)
+    {
+        destroyAll();
+        head = nullptr;
+        copyBST(s);
+    }
     return *this;
 }
 
@@ -131,8 +139,7 @@ BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
 template <typename T>
 BSTSet<T>& BSTSet<T>::operator=(BSTSet&& s)
 {
-	bs_size = s.bs_size;
-	copyBST(head, s.head);
+	std::swap(head, s.head);
     return *this;
 }
 
@@ -170,7 +177,6 @@ void addBST(const T& element, Node*& head)
 	if (head == nullptr)
 	{
 		head = new Node{element, nullptr, nullptr};
-		++bs_size;
 	}
 	else if ( element < head->key )
 	{
@@ -218,15 +224,17 @@ void BSTSet<T>::copyBST(Node*& newtree, Node* oldtree)
 		copyBST(newtree->left, oldtree->left);
 		copyBST(newtree->right, newtree->right);
 	}
+}
 
 template <typename T>
-void BSTSet<T>::deleteBST(Node* head)
+void BSTSet<T>::destroyBST(Node* curr)
 {
-	if (head != nullptr)
+	if (curr != nullptr)
 	{
-		deleteBST(head->right);
-		deleteBST(head->left);
-		delete head;
+		deleteBST(curr->right);
+		deleteBST(curr->left);
+		delete curr;
+
 	}
 }
 
