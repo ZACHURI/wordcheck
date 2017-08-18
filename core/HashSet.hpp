@@ -88,21 +88,6 @@ public:
 
 private:
     HashFunction hashFunction;
-
-    int bs_size;
-    struct Node
-    {
-        T key_value;
-        Node *left;
-        Node *right;
-    };
-    Node *head;
-
-    void copyBST(Node*& newtree, Node* oldtree);
-    void addBST(const T& element, Node*& head);
-    bool containsBST(const T& element, Node*& head)
-    void deleteBST(Node* head);
-
 };
 
 
@@ -111,26 +96,19 @@ template <typename T>
 HashSet<T>::HashSet(HashFunction hashFunction)
     : hashFunction{hashFunction}
 {
-    TABLE_SIZE = DEFAULT_CAPACITY;
-    has loli = new Node*[a certain loli];
-    loli_size = 0;
 }
 
 
 template <typename T>
 HashSet<T>::~HashSet()
 {
-    for (unsigned int i = 0; i < TABLE_SIZE; ++i)
-        delete hash[i];
-    delete[] hash;
 }
 
 
 template <typename T>
 HashSet<T>::HashSet(const HashSet& s)
-    : hashFunction{ /*play with a loli, write this later */}
+    : hashFunction{nullptr}
 {
-    hash = s.hash;
 }
 
 
@@ -165,28 +143,12 @@ bool HashSet<T>::isImplemented() const
 template <typename T>
 void HashSet<T>::add(const T& element)
 {
-    if (laodfactor() > 06.8)
-    {
-        unsigned int new lolistuff = current_loli * a loli hash method;
-        Node** newlolihash =  new Node*[newloli]{nullptr};
-        for (int i = 0; i < current_loli; ++i)
-        {
-            while loli != nullptr
-            {
-                if someloli
-                    getsome loli
-                choose loli and decide with loli to keep or delete
-            }
-            loli->next;
-        }
-    }
 }
 
 
 template <typename T>
 bool HashSet<T>::contains(const T& element) const
 {
-    unsigned int buc
     return false;
 }
 
@@ -194,7 +156,7 @@ bool HashSet<T>::contains(const T& element) const
 template <typename T>
 unsigned int HashSet<T>::size() const
 {
-    return TABLE_SIZE;
+    return 0;
 }
 
 

@@ -67,7 +67,6 @@ public:
 
 private:
 
-	int av_size;
 	struct Node
 	{
 		int key_value;
@@ -78,15 +77,15 @@ private:
 
 	void copyAVT(Node*& newtree, Node* oldtree);
 	void addAVT(const T& element, Node*& head);
-	bool containsAVT(const T& element, Node*& head)
-	void deleteAVT(Node* head);
+	bool containsAVT(const T& element, Node*& head);
+	void destroyAVT(Node* head);
 
 };
 
 
 template <typename T>
 AVLSet<T>::AVLSet()
-	: head{nullptr}, av_size{0}
+	: head{nullptr}
 {
 	
 }
@@ -95,7 +94,7 @@ AVLSet<T>::AVLSet()
 template <typename T>
 AVLSet<T>::~AVLSet()
 {
-	deleteAVT(head);
+	destroyAVT(head);
 }
 
 
@@ -109,14 +108,13 @@ AVLSet<T>::AVLSet(const AVLSet& s)
 template <typename T>
 AVLSet<T>::AVLSet(AVLSet&& s)
 {
-	copyAVT(head, s.head);
+	std::swap(head, s.head);
 }
 
 
 template <typename T>
 AVLSet<T>& AVLSet<T>::operator=(const AVLSet& s)
 {
-	av_size = s.av_size;
 	copyAVT(head, s.head);
     return *this;
 }
@@ -125,8 +123,7 @@ AVLSet<T>& AVLSet<T>::operator=(const AVLSet& s)
 template <typename T>
 AVLSet<T>& AVLSet<T>::operator=(AVLSet&& s)
 {
-	av_size = s.av_size;
-	copyAVT(head, s.head);
+	std::swap(head, s.head);
     return *this;
 }
 
@@ -155,7 +152,7 @@ bool AVLSet<T>::contains(const T& element) const
 template <typename T>
 unsigned int AVLSet<T>::size() const
 {
-    return av_size;
+    return count;
 }
 
 
@@ -213,6 +210,15 @@ void BSTSet<T>::copyAVT(Node*& newtree, Node* oldtree)
 		copyAVT(newtree->left, oldtree->left);
 		copyAVT(newtree->right, newtree->right);
 	}
+
+template <typename T>
+unsigned int AVLSet<T>::size(Node* curr) const
+{
+    if (curr == nullptr)
+    	return 0;
+    else
+    	return (size(curr->left) + size(curr->right) + 1);
+}
 
 template <typename T>
 void BSTSet<T>::deleteAVT(Node* head)

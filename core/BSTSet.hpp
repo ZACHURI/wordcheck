@@ -78,11 +78,10 @@ private:
 
 	Node* head;
 
-	int sizeBST(Node* head);
 	void copyBST(Node*& newtree, Node* oldtree);
 	void addBST(const T& element, Node*& head);
 	bool containsBST(const T& element, Node*& head);
-	void deleteBST(Node* head);
+	void destroyBST(Node* head);
 
 
 };
@@ -128,7 +127,7 @@ BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
 {
 	if (this != &s)
     {
-        destroyAll();
+        destroyAll(head);
         head = nullptr;
         copyBST(s);
     }
@@ -147,7 +146,7 @@ BSTSet<T>& BSTSet<T>::operator=(BSTSet&& s)
 template <typename T>
 bool BSTSet<T>::isImplemented() const
 {
-    return false;
+    return true;
 }
 
 
@@ -161,15 +160,10 @@ void BSTSet<T>::add(const T& element)
 template <typename T>
 bool BSTSet<T>::contains(const T& element) const
 {
-    return false;
+    return containsBST(element, head);
 }
 
 
-template <typename T>
-unsigned int BSTSet<T>::size() const
-{
-    return bs_size;
-}
 
 template <typename T>
 void addBST(const T& element, Node*& head)
@@ -198,17 +192,26 @@ bool containsBST(const T& element, Node*& head)
 	}
 	else if ( element < head->key )
 	{
-		addBST(element, head->left);
+		containsBST(element, head->left);
 	}
 	else if ( element > head->key )
 	{
-		addBST(element, head->right);
+		containsBST(element, head->right);
 	}
 	else
 	{
 		return true;
 	}
 
+}
+
+template <typename T>
+unsigned int BSTSet<T>::size(Node* curr) const
+{
+    if (curr == nullptr)
+    	return 0;
+    else
+    	return (size(curr->left) + size(curr->right) + 1);
 }
 
 template <typename T>
@@ -231,8 +234,8 @@ void BSTSet<T>::destroyBST(Node* curr)
 {
 	if (curr != nullptr)
 	{
-		deleteBST(curr->right);
-		deleteBST(curr->left);
+		destroyBST(curr->right);
+		destroyBST(curr->left);
 		delete curr;
 
 	}
