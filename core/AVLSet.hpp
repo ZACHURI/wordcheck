@@ -69,16 +69,22 @@ private:
 
 	struct Node
 	{
-		int key_value;
+		T key_value;
 		Node *left;
 		Node *right;
 	};
 	Node *head;
 
-	void copyAVT(Node*& newtree, Node* oldtree);
-	void addAVT(const T& element, Node*& head);
-	bool containsAVT(const T& element, Node*& head);
-	void destroyAVT(Node* head);
+	void copyAVL(Node*& newtree, Node* oldtree);
+	void addAVL(const T& element, Node*& head);
+	bool containsAVL(const T& element, Node*& head) const;
+	void destroyAVL(Node* head);
+	unsigned int sizeAVL(Node* curr) const;
+
+	void RRrotation(Node*& head);
+	void LLrotation(Node*& head);
+	void RLrotation(Node*& head);
+	void LRrotation(Node*& head);
 
 };
 
@@ -94,14 +100,14 @@ AVLSet<T>::AVLSet()
 template <typename T>
 AVLSet<T>::~AVLSet()
 {
-	destroyAVT(head);
+	destroyAVL(head);
 }
 
 
 template <typename T>
 AVLSet<T>::AVLSet(const AVLSet& s)
 {
-	copyAVT(head, s.head);
+	copyAVL(head, s.head);
 }
 
 
@@ -115,7 +121,12 @@ AVLSet<T>::AVLSet(AVLSet&& s)
 template <typename T>
 AVLSet<T>& AVLSet<T>::operator=(const AVLSet& s)
 {
-	copyAVT(head, s.head);
+	if (this != &s)
+    {
+        destroyAVL(head);
+        head = nullptr;
+        copyAVL(s);
+    }
     return *this;
 }
 
@@ -131,74 +142,127 @@ AVLSet<T>& AVLSet<T>::operator=(AVLSet&& s)
 template <typename T>
 bool AVLSet<T>::isImplemented() const
 {
-    return false;
+    return true;
 }
 
 
 template <typename T>
 void AVLSet<T>::add(const T& element)
 {
-	addAVT( element, head);
+	addAVL( element, head);
 }
 
 
 template <typename T>
 bool AVLSet<T>::contains(const T& element) const
 {
-    return false;
+    return containsAVL(element, head);
 }
 
 
 template <typename T>
 unsigned int AVLSet<T>::size() const
 {
-    return count;
+    return sizeAVL(head);
 }
 
 
 template <typename T>
-void addAVT(const T& element, Node*& head)
-{
-	if (head == nullptr)
-	{
-		head = new Node{element, nullptr, nullptr};
-		++bs_size;
-	}
-	else if ( element < head->key )
-	{
-		addAVT(element, head->left);
-	}
-	else if ( element > head->key )
-	{
-		addAVT(element, head->right);
-	}
-
-}
-
-template <typename T>
-bool containsAVT(const T& element, Node*& head)
+bool AVLSet<T>::containsAVL(const T& element, Node*& head) const
 {
 	if (head == nullptr)
 	{
 		return false;
 	}
-	else if ( element < head->key )
+	else if ( element < head->key_value )
 	{
-		addAVT(element, head->left);
+		containsAVL(element, head->left);
 	}
-	else if ( element > head->key )
+	else if ( element > head->key_value )
 	{
-		addAVT(element, head->right);
+		containsAVL(element, head->right);
 	}
 	else
 	{
 		return true;
 	}
+}
+
+template <typename T>
+void AVLSet<T>::addAVL(const T& element, Node*& head)
+{
+	if (head == nullptr)
+	{
+		head = new Node{element, nullptr, nullptr};
+	}
+	else if ( element < head->key_value )
+	{
+		addAVL(element, head->right);
+		if ( sizeAVL(head->right) == sizeAVL(head->left) )
+		{
+			if ( element > head->right->key_value )
+				RRrotation(head);
+			else
+				RLrotation(head);
+		}
+	}
+	else if ( element > head->key_value )
+	{
+		addAVL(element, head->left);
+		if ( sizeAVL(head->right) == sizeAVL(head->left) )
+		{
+			if ( element < head->left->key_value )
+				LLrotation(head);
+			else
+				LRrotation(head);
+		}
+	}
+	
 
 }
 
 template <typename T>
-void BSTSet<T>::copyAVT(Node*& newtree, Node* oldtree)
+void AVLSet<T>::RRrotation(Node*& head)
+{
+	Node* temp;
+	temp = head->right;
+	head->right = temp->left;
+	temp->left = head;
+	head = temp;
+
+}
+
+template <typename T>
+void AVLSet<T>::LLrotation(Node*& head)
+{
+	Node* temp;
+	temp = head->left;
+	head->left = temp->right;
+	temp->right = head;
+	head = temp;
+
+}
+
+template <typename T>
+void AVLSet<T>::LRrotation(Node*& head)
+{
+	RRrotation(head->left);
+	LLrotation(head);
+}
+
+template <typename T>
+void AVLSet<T>::RLrotation(Node*& head)
+{
+	LLrotation(head->right);
+	RRrotation(head);
+}
+
+
+
+
+
+template <typename T>
+void AVLSet<T>::copyAVL(Node*& newtree, Node* oldtree)
 {
 	if ( oldtree == nullptr )
 	{
@@ -207,26 +271,27 @@ void BSTSet<T>::copyAVT(Node*& newtree, Node* oldtree)
 	else
 	{
 		newtree = new Node{oldtree->key_value, oldtree->left, oldtree->right};
-		copyAVT(newtree->left, oldtree->left);
-		copyAVT(newtree->right, newtree->right);
+		copyAVL(newtree->left, oldtree->left);
+		copyAVL(newtree->right, newtree->right);
 	}
+}
 
 template <typename T>
-unsigned int AVLSet<T>::size(Node* curr) const
+unsigned int AVLSet<T>::sizeAVL(Node* curr) const
 {
     if (curr == nullptr)
     	return 0;
     else
-    	return (size(curr->left) + size(curr->right) + 1);
+    	return (sizeAVL(curr->left) + sizeAVL(curr->right) + 1);
 }
 
 template <typename T>
-void BSTSet<T>::deleteAVT(Node* head)
+void AVLSet<T>::destroyAVL(Node* head)
 {
 	if (head != nullptr)
 	{
-		deleteAVT(head->right);
-		deleteAVT(head->left);
+		destroyAVL(head->right);
+		destroyAVL(head->left);
 		delete head;
 	}
 }

@@ -70,7 +70,7 @@ public:
 private:
 	struct Node
 	{
-		int key_value;
+		T key_value;
 		Node *left;
 		Node *right;
 	};
@@ -80,8 +80,10 @@ private:
 
 	void copyBST(Node*& newtree, Node* oldtree);
 	void addBST(const T& element, Node*& head);
-	bool containsBST(const T& element, Node*& head);
+	bool containsBST(const T& element, Node*& head) const;
 	void destroyBST(Node* head);
+
+	unsigned int size(Node* curr) const;
 
 
 };
@@ -127,7 +129,7 @@ BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
 {
 	if (this != &s)
     {
-        destroyAll(head);
+        destroyBST(head);
         head = nullptr;
         copyBST(s);
     }
@@ -163,20 +165,25 @@ bool BSTSet<T>::contains(const T& element) const
     return containsBST(element, head);
 }
 
+template <typename T>
+unsigned int BSTSet<T>::size() const
+{
+    return size(head);
+}
 
 
 template <typename T>
-void addBST(const T& element, Node*& head)
+void BSTSet<T>::addBST(const T& element, Node*& head)
 {
 	if (head == nullptr)
 	{
 		head = new Node{element, nullptr, nullptr};
 	}
-	else if ( element < head->key )
+	else if ( element < head->key_value )
 	{
 		addBST(element, head->left);
 	}
-	else if ( element > head->key )
+	else if ( element > head->key_value )
 	{
 		addBST(element, head->right);
 	}
@@ -184,17 +191,17 @@ void addBST(const T& element, Node*& head)
 }
 
 template <typename T>
-bool containsBST(const T& element, Node*& head)
+bool BSTSet<T>::containsBST(const T& element, Node*& head) const
 {
 	if (head == nullptr)
 	{
 		return false;
 	}
-	else if ( element < head->key )
+	else if ( element < head->key_value )
 	{
 		containsBST(element, head->left);
 	}
-	else if ( element > head->key )
+	else if ( element > head->key_value )
 	{
 		containsBST(element, head->right);
 	}
