@@ -77,7 +77,7 @@ private:
 
 	void copyAVL(Node*& newtree, Node* oldtree);
 	void addAVL(const T& element, Node*& head);
-	bool containsAVL(const T& element, Node*& head) const;
+	bool containsAVL(const T& element, Node* head) const;
 	void destroyAVL(Node* head);
 	unsigned int sizeAVL(Node* curr) const;
 
@@ -125,7 +125,7 @@ AVLSet<T>& AVLSet<T>::operator=(const AVLSet& s)
     {
         destroyAVL(head);
         head = nullptr;
-        copyAVL(s);
+        copyAVL(head, s.head);
     }
     return *this;
 }
@@ -168,7 +168,7 @@ unsigned int AVLSet<T>::size() const
 
 
 template <typename T>
-bool AVLSet<T>::containsAVL(const T& element, Node*& head) const
+bool AVLSet<T>::containsAVL(const T& element, Node* head) const
 {
 	if (head == nullptr)
 	{

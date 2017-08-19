@@ -88,13 +88,26 @@ public:
 
 private:
     HashFunction hashFunction;
+
+    struct Node
+    {
+        T key;
+        Node* next;
+    };
+
+    Node** hashtable;
+
+    unsigned int curr_capacity;
+
+    void copyHT(const HashSet& s);
+    void destroyHT();
 };
 
 
 
 template <typename T>
 HashSet<T>::HashSet(HashFunction hashFunction)
-    : hashFunction{hashFunction}
+    : hashFunction{hashFunction}, hashtable{new Node*[DEFAULT_CAPACITY]{nullptr}}
 {
 }
 
@@ -102,13 +115,15 @@ HashSet<T>::HashSet(HashFunction hashFunction)
 template <typename T>
 HashSet<T>::~HashSet()
 {
+    destroyHT();
 }
 
 
 template <typename T>
 HashSet<T>::HashSet(const HashSet& s)
-    : hashFunction{nullptr}
+    : hashFunction{s.hashFunction}, hashtable{new Node*[s.curr_capacity]{nullptr}}
 {
+    copyHT(s);
 }
 
 
@@ -116,12 +131,21 @@ template <typename T>
 HashSet<T>::HashSet(HashSet&& s)
     : hashFunction{nullptr}
 {
+    std::swap(hashtable, s.hashtable);
 }
 
 
 template <typename T>
 HashSet<T>& HashSet<T>::operator=(const HashSet& s)
 {
+    if (this != &s)
+    {
+        destroyHT();
+        hashtable = new Node*[s.curr_capacity]{nullptr};
+        copyHT(s);
+        hashFunction = s.hashFunction;
+        curr_capacity = s.curr_capacity;
+    }
     return *this;
 }
 
@@ -129,6 +153,7 @@ HashSet<T>& HashSet<T>::operator=(const HashSet& s)
 template <typename T>
 HashSet<T>& HashSet<T>::operator=(HashSet&& s)
 {
+    std::swap(hashtable, s.hashtable);
     return *this;
 }
 
@@ -136,19 +161,74 @@ HashSet<T>& HashSet<T>::operator=(HashSet&& s)
 template <typename T>
 bool HashSet<T>::isImplemented() const
 {
-    return false;
+    return true;
 }
 
 
 template <typename T>
 void HashSet<T>::add(const T& element)
 {
+    
+
+    if (contains(element) == false)
+    {
+    	if (size()/curr_capacity > 0.8)
+    	{
+    		unsigned int new_capacity = curr_capacity * 2;
+    		Node** new_hashtable = new Node*[new_capacity]{nullptr};
+    		for ( unsigned int i=0 ; i < new_capacity; ++i)
+		    {
+		        Node* curr = new_hashtable[i];
+		        while (curr != nullptr)
+		        {
+		            if (curr != nullptr)
+		                new_hashtable[i] = new Node{curr->key, nullptr};
+		            else
+		            {
+		                Node* temp = new_hashtable[i];
+		                while ( temp->next != nullptr)
+		                {
+		                    temp = temp->next;
+		                }
+		                temp->next = new Node{curr->key, nullptr};
+
+		            }
+		            curr = curr->next;
+		        }
+		    }
+		    hashtable = new_hashtable;
+
+
+    	}
+        unsigned int key_value = hashFunction(element);
+        if (hashtable[key_value] == nullptr)
+        {
+        	hashtable[key_value] = new Node{element, nullptr};
+        }
+        else
+        {
+        	Node* next = hashtable[key_value];
+        	hashtable[key_value] = new Node{element, next};
+        }
+
+    }
 }
 
 
 template <typename T>
 bool HashSet<T>::contains(const T& element) const
 {
+    Node* curr;
+    for ( unsigned int i=0; i < curr_capacity; ++i)
+    {
+        curr = hashtable[i];
+        while (curr != nullptr)
+        {
+            if (curr->key == element)
+                return true;
+            curr = curr->next;
+        }
+    }
     return false;
 }
 
@@ -156,8 +236,66 @@ bool HashSet<T>::contains(const T& element) const
 template <typename T>
 unsigned int HashSet<T>::size() const
 {
-    return 0;
+    unsigned int count = 0;
+    Node* curr;
+    for ( unsigned int i=0; i < curr_capacity; ++i)
+    {
+        curr = hashtable[i];
+        while (curr != nullptr)
+        {
+            ++count;
+            curr = curr->next;
+        }
+    }
+    return count;
 }
+
+template <typename T>
+void HashSet<T>::copyHT(const HashSet& s)
+{
+    for ( unsigned int i=0 ; i < s.curr_capacity; ++i)
+    {
+        Node* curr = hashtable[i];
+        while (curr != nullptr)
+        {
+            if (curr != nullptr)
+                hashtable[i] = new Node{curr->key, nullptr};
+            else
+            {
+                Node* temp = hashtable[i];
+                while ( temp->next != nullptr)
+                {
+                    temp = temp->next;
+                }
+                temp->next = new Node{curr->key, nullptr};
+
+            }
+            curr = curr->next;
+        }
+    }
+}
+
+
+template <typename T>
+void HashSet<T>::destroyHT()
+{
+    for ( unsigned int i=0 ; i < DEFAULT_CAPACITY; ++i)
+    {
+        Node* curr = hashtable[i];
+        while (curr != nullptr)
+        {
+            Node* temp = curr;
+            curr = curr->next;
+            delete temp;
+            
+        }
+
+    }
+
+    delete[] hashtable;
+}
+
+
 
 
 

@@ -80,7 +80,7 @@ private:
 
 	void copyBST(Node*& newtree, Node* oldtree);
 	void addBST(const T& element, Node*& head);
-	bool containsBST(const T& element, Node*& head) const;
+	bool containsBST(const T& element, Node* head) const;
 	void destroyBST(Node* head);
 
 	unsigned int size(Node* curr) const;
@@ -131,7 +131,7 @@ BSTSet<T>& BSTSet<T>::operator=(const BSTSet& s)
     {
         destroyBST(head);
         head = nullptr;
-        copyBST(s);
+        copyBST(head, s.head);
     }
     return *this;
 }
@@ -191,7 +191,7 @@ void BSTSet<T>::addBST(const T& element, Node*& head)
 }
 
 template <typename T>
-bool BSTSet<T>::containsBST(const T& element, Node*& head) const
+bool BSTSet<T>::containsBST(const T& element, Node* head) const
 {
 	if (head == nullptr)
 	{
