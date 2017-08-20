@@ -76,8 +76,6 @@ private:
 	Node *head;
 
 	void copyAVL(Node*& newtree, Node* oldtree);
-	void addAVL(const T& element, Node*& head);
-	bool containsAVL(const T& element, Node* head) const;
 	void destroyAVL(Node* head);
 	unsigned int sizeAVL(Node* curr) const;
 
@@ -93,7 +91,6 @@ template <typename T>
 AVLSet<T>::AVLSet()
 	: head{nullptr}
 {
-	
 }
 
 
@@ -113,6 +110,7 @@ AVLSet<T>::AVLSet(const AVLSet& s)
 
 template <typename T>
 AVLSet<T>::AVLSet(AVLSet&& s)
+	: head{nullptr}
 {
 	std::swap(head, s.head);
 }
@@ -149,14 +147,79 @@ bool AVLSet<T>::isImplemented() const
 template <typename T>
 void AVLSet<T>::add(const T& element)
 {
-	addAVL( element, head);
+	if (head == nullptr)
+	{
+		head = new Node{element, nullptr, nullptr};
+	}
+	else
+	{
+		Node* temp  = head;
+		Node* res = head;
+		while(temp != nullptr)
+		{
+			if (temp->key_value == element) return;
+			else if (temp->key_value > element)
+			{
+
+				res = temp;
+				temp = temp->left;
+			}
+			else if (temp->key_value < element)
+			{
+				res = temp;
+				temp = temp->right;
+			}
+		}
+		if (res->key_value > element)
+		{
+			head->left = new Node{element, nullptr, nullptr};
+			if ( sizeAVL(head->right) == sizeAVL(head->left) )
+			{
+				if ( element > head->right->key_value )
+					RRrotation(head);
+				else
+					RLrotation(head);
+			}
+
+		}
+		if (res->key_value < element) 
+		{
+			head->right = new Node{element, nullptr, nullptr};
+			if ( sizeAVL(head->right) == sizeAVL(head->left) )
+			{
+				if ( element < head->left->key_value )
+					LLrotation(head);
+				else
+					LRrotation(head);
+			}
+		}
+	}
 }
 
 
 template <typename T>
 bool AVLSet<T>::contains(const T& element) const
 {
-    return containsAVL(element, head);
+    Node* curr = head;
+	if (curr == nullptr) return false;
+	while (curr != nullptr)
+	{
+	    if (curr->key_value == element)
+		{
+			return true;
+		}
+		
+		else if ( head->key_value > element )
+		{
+			curr = curr -> left;
+		}
+		else
+		{
+			curr = curr -> right;
+		}
+		
+	}
+	return false;
 }
 
 
@@ -164,61 +227,6 @@ template <typename T>
 unsigned int AVLSet<T>::size() const
 {
     return sizeAVL(head);
-}
-
-
-template <typename T>
-bool AVLSet<T>::containsAVL(const T& element, Node* head) const
-{
-	if (head == nullptr)
-	{
-		return false;
-	}
-	else if ( element < head->key_value )
-	{
-		containsAVL(element, head->left);
-	}
-	else if ( element > head->key_value )
-	{
-		containsAVL(element, head->right);
-	}
-	else
-	{
-		return true;
-	}
-}
-
-template <typename T>
-void AVLSet<T>::addAVL(const T& element, Node*& head)
-{
-	if (head == nullptr)
-	{
-		head = new Node{element, nullptr, nullptr};
-	}
-	else if ( element < head->key_value )
-	{
-		addAVL(element, head->right);
-		if ( sizeAVL(head->right) == sizeAVL(head->left) )
-		{
-			if ( element > head->right->key_value )
-				RRrotation(head);
-			else
-				RLrotation(head);
-		}
-	}
-	else if ( element > head->key_value )
-	{
-		addAVL(element, head->left);
-		if ( sizeAVL(head->right) == sizeAVL(head->left) )
-		{
-			if ( element < head->left->key_value )
-				LLrotation(head);
-			else
-				LRrotation(head);
-		}
-	}
-	
-
 }
 
 template <typename T>
@@ -286,14 +294,17 @@ unsigned int AVLSet<T>::sizeAVL(Node* curr) const
 }
 
 template <typename T>
-void AVLSet<T>::destroyAVL(Node* head)
+void AVLSet<T>::destroyAVL(Node* curr)
 {
-	if (head != nullptr)
+	if (!curr)
 	{
-		destroyAVL(head->right);
-		destroyAVL(head->left);
-		delete head;
+		return;
+
+
 	}
+	destroyAVL(curr->right);
+	destroyAVL(curr->left);
+	delete curr;
 }
 
 

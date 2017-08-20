@@ -172,7 +172,7 @@ void HashSet<T>::add(const T& element)
 
     if (contains(element) == false)
     {
-    	if (size()/curr_capacity > 0.8)
+    	if (double(size())/double(curr_capacity) > 0.8)
     	{
     		unsigned int new_capacity = curr_capacity * 2;
     		Node** new_hashtable = new Node*[new_capacity]{nullptr};
