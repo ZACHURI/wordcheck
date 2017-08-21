@@ -187,6 +187,7 @@ void HashSet<T>::add(const T& element)
                     unsigned int index = hashFunction(curr->key) % new_capacity;
                     if (new_hashtable[index] == nullptr)
                     {
+
                         new_hashtable[index] = new Node{curr->key, nullptr};
                     }
                     else

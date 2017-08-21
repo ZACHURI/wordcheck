@@ -87,8 +87,7 @@ private:
 
 	Node* RRrotation(Node* head) const;
 	Node* LLrotation(Node* head) const;
-	Node* RLrotation(Node* head) const;
-	Node* LRrotation(Node* head) const;
+
 
 };
 
@@ -294,6 +293,7 @@ unsigned int AVLSet<T>::size() const
 template <typename T>
 typename AVLSet<T>::Node* AVLSet<T>::RRrotation(Node* head) const
 {
+
 	Node* temp;
 	Node* temp2;
 	temp = head->left;
@@ -317,21 +317,7 @@ typename AVLSet<T>::Node* AVLSet<T>::LLrotation(Node* head) const
 
 }
 
-template <typename T>
-typename AVLSet<T>::Node* AVLSet<T>::LRrotation(Node* head) const
-{
-	Node* temp;
-	temp = LLrotation(head->left);
-	return RRrotation(temp);
-}
 
-template <typename T>
-typename AVLSet<T>::Node* AVLSet<T>::RLrotation(Node* head) const
-{
-	Node* temp;
-	temp = RRrotation(head->right);
-	return LLrotation(temp);
-}
 
 
 

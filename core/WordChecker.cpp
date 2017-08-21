@@ -28,7 +28,6 @@ WordChecker::WordChecker(const Set<std::string>& words)
 bool WordChecker::wordExists(const std::string& word) const
 {
     return words.contains(word);
-    //return false;
 }
 
 
