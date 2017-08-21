@@ -173,36 +173,77 @@ bool HashSet<T>::isImplemented() const
 template <typename T>
 void HashSet<T>::add(const T& element)
 {
-
     if (contains(element) == false)
     {
     	if (double(size())/double(curr_capacity) > 0.8)
     	{
     		unsigned int new_capacity = curr_capacity * 2;
     		Node** new_hashtable = new Node*[new_capacity]{nullptr};
-    		for ( unsigned int i=0 ; i < new_capacity; ++i)
-		    {
-		        Node* curr = new_hashtable[i];
-		        while (curr != nullptr)
-		        {
-		            if (curr != nullptr)
-		                new_hashtable[i] = new Node{curr->key, nullptr};
-		            else
-		            {
-		                Node* temp = new_hashtable[i];
-		                while ( temp->next != nullptr)
-		                {
-		                    temp = temp->next;
-		                }
-		                temp->next = new Node{curr->key, nullptr};
+            for ( unsigned int i=0 ; i < curr_capacity; ++i)
+            {
+                Node* curr = hashtable[i];
+                while (curr != nullptr)
+                {
+                    unsigned int index = hashFunction(curr->key) % new_capacity;
+                    if (new_hashtable[index] == nullptr)
+                    {
+                        new_hashtable[index] = new Node{curr->key, nullptr};
+                    }
+                    else
+                    {
+                        Node* temp = new_hashtable[index];
+                        while ( temp->next != nullptr)
+                        {
+                            temp = temp->next;
+                        }
+                        temp->next = new Node{curr->key, nullptr};
 
-		            }
-		            curr = curr->next;
-		        }
-		    }
-		    hashtable = new_hashtable;
+                    }
+                    curr = curr->next;
+                }
+            }
+            hashtable = new_hashtable;
 
-		    curr_capacity = new_capacity;
+
+            curr_capacity = new_capacity;
+
+
+
+            /*for (unsigned int i=0; i<curr_capacity; ++i)
+            {
+                if (hashtable[i])
+                {
+    	            Node* curr = hashtable[i];
+        		    while (curr != nullptr)
+        		    {
+                        unsigned int index = hashFunction(curr->key) % new_capacity;
+            		    if (new_hashtable[index])
+                        {
+                            std::cout << "loli" << std::endl;
+            	            new_hashtable[index] = new Node{curr->key, nullptr};
+                        }
+            		    else
+            	        {
+            	            Node* temp = new_hashtable[index];
+                            if (temp)
+                            {
+                                while ( temp->next != nullptr)
+                		        {
+                		            temp = temp->next;
+                		        }
+                                temp->next = new Node{curr->key, nullptr};
+                            }   
+
+                            std::cout << curr->key << std::endl;
+
+            		    }
+        		        curr = curr->next;
+        		    }
+                }
+    		    hashtable = new_hashtable;
+
+    		    curr_capacity = new_capacity;
+            }*/
 
 
     	}
@@ -245,8 +286,7 @@ bool HashSet<T>::contains(const T& element) const
         {
             return true;
         }
-        std::cout << temp->key << std::endl;
-        std::cout << element << std::endl;
+        
         temp = temp->next;
     }
     //return hashtable[index].exists(element) != -1

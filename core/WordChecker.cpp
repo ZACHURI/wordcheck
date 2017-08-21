@@ -34,11 +34,13 @@ bool WordChecker::wordExists(const std::string& word) const
 
 std::vector<std::string> WordChecker::findSuggestions(const std::string& word) const
 {
+
+
     std::vector<std::string> suggest;
     std::string letter = "QWERTYUIOPASDFGHJKLZXCVBNM";
     std::string temp;
 
-    std::cout << words.size() << std::endl;
+   
     //Swapping each adjacent pair of characters in the word.
     for (unsigned int i = 0; i < word.size()-1; ++i)
     {

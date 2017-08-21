@@ -21,7 +21,6 @@
 
 int main()
 {
-	std::cout << "loli" << std::endl;
 
 
 
