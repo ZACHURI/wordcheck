@@ -15,8 +15,12 @@
 #define WORDCHECKER_HPP
 
 #include <string>
+#include <cstring>
 #include <vector>
 #include "Set.hpp"
+#include <algorithm>
+#include <iostream>
+#include <iterator>
 
 
 

@@ -11,6 +11,7 @@
 #define LISTSET_HPP
 
 #include <algorithm>
+#include <iostream>
 #include "Set.hpp"
 
 

@@ -17,6 +17,8 @@
 #define AVLSET_HPP
 
 #include "Set.hpp"
+#include <algorithm>
+#include <iostream>
 
 
 
@@ -77,12 +79,16 @@ private:
 
 	void copyAVL(Node*& newtree, Node* oldtree);
 	void destroyAVL(Node* head);
-	unsigned int sizeAVL(Node* curr) const;
 
-	void RRrotation(Node*& head);
-	void LLrotation(Node*& head);
-	void RLrotation(Node*& head);
-	void LRrotation(Node*& head);
+	bool see(Node* curr, const T& element) const;
+
+	unsigned int sizeAVL(Node* curr) const;
+	Node* insert(Node* head, const T& element) const;
+
+	Node* RRrotation(Node* head) const;
+	Node* LLrotation(Node* head) const;
+	Node* RLrotation(Node* head) const;
+	Node* LRrotation(Node* head) const;
 
 };
 
@@ -147,7 +153,7 @@ bool AVLSet<T>::isImplemented() const
 template <typename T>
 void AVLSet<T>::add(const T& element)
 {
-	if (head == nullptr)
+	/*if (head == nullptr)
 	{
 		head = new Node{element, nullptr, nullptr};
 	}
@@ -172,34 +178,88 @@ void AVLSet<T>::add(const T& element)
 		}
 		if (res->key_value > element)
 		{
-			head->left = new Node{element, nullptr, nullptr};
-			if ( sizeAVL(head->right) == sizeAVL(head->left) )
+			res->left = new Node{element, nullptr, nullptr};
+			if ( sizeAVL(res->right) == sizeAVL(res->left) )
 			{
-				if ( element > head->right->key_value )
-					RRrotation(head);
+				if ( element > res->right->key_value )
+				{
+					RRrotation(res);
+				}
 				else
-					RLrotation(head);
+				{
+					RLrotation(res);
+				}
 			}
 
 		}
 		if (res->key_value < element) 
 		{
-			head->right = new Node{element, nullptr, nullptr};
-			if ( sizeAVL(head->right) == sizeAVL(head->left) )
+			res->right = new Node{element, nullptr, nullptr};
+			if ( sizeAVL(res->right) == sizeAVL(res->left) )
 			{
-				if ( element < head->left->key_value )
-					LLrotation(head);
+				if ( element < res->left->key_value )
+				{
+					LLrotation(res);
+				}
 				else
-					LRrotation(head);
+				{
+					LRrotation(res);
+				}
 			}
 		}
+	}*/
+	Node* temp = head;
+	head = insert(temp, element);
+}
+
+template <typename T>
+typename AVLSet<T>::Node* AVLSet<T>::insert(Node* head, const T& element) const
+{
+	if (head == nullptr)
+	{
+		head = new Node{element, nullptr, nullptr};
 	}
+	if (head->key_value > element)
+	{
+		head->left = insert(head->left, element);
+	}
+	else if (head->key_value < element)
+	{
+		head->right = insert(head->right, element);
+	}
+	else
+		return head;
+
+	int dif;
+	dif = sizeAVL(head->left) - sizeAVL(head->right);
+	if (head->left)
+	{
+		if (element < head->left->key_value && dif>1) return RRrotation(head);
+		if (element > head->left->key_value && dif>1)
+		{
+			head->left = LLrotation(head->left);
+			return RRrotation(head);
+		}
+	}
+	if (head->right)
+	{
+		if (element > head->right->key_value && dif<-1) return LLrotation(head);
+		if (element < head->right->key_value && dif<-1)
+		{
+			head->right = RRrotation(head->right);
+			return LLrotation(head);
+		}
+	}
+	return head;
 }
 
 
 template <typename T>
 bool AVLSet<T>::contains(const T& element) const
 {
+    /*
+
+
     Node* curr = head;
 	if (curr == nullptr) return false;
 	while (curr != nullptr)
@@ -219,7 +279,9 @@ bool AVLSet<T>::contains(const T& element) const
 		}
 		
 	}
-	return false;
+	return false;*/
+
+	return see(head, element);
 }
 
 
@@ -230,39 +292,45 @@ unsigned int AVLSet<T>::size() const
 }
 
 template <typename T>
-void AVLSet<T>::RRrotation(Node*& head)
+typename AVLSet<T>::Node* AVLSet<T>::RRrotation(Node* head) const
 {
 	Node* temp;
-	temp = head->right;
-	head->right = temp->left;
-	temp->left = head;
-	head = temp;
-
-}
-
-template <typename T>
-void AVLSet<T>::LLrotation(Node*& head)
-{
-	Node* temp;
+	Node* temp2;
 	temp = head->left;
-	head->left = temp->right;
+	temp2 = temp->right;
 	temp->right = head;
-	head = temp;
+	head->left = temp2;
+	return temp;
 
 }
 
 template <typename T>
-void AVLSet<T>::LRrotation(Node*& head)
+typename AVLSet<T>::Node* AVLSet<T>::LLrotation(Node* head) const
 {
-	RRrotation(head->left);
-	LLrotation(head);
+	Node* temp;
+	Node* temp2;
+	temp = head->right;
+	temp2 = temp->left;
+	temp->left = head;
+	head->right = temp2;
+	return temp;
+
 }
 
 template <typename T>
-void AVLSet<T>::RLrotation(Node*& head)
+typename AVLSet<T>::Node* AVLSet<T>::LRrotation(Node* head) const
 {
-	LLrotation(head->right);
-	RRrotation(head);
+	Node* temp;
+	temp = LLrotation(head->left);
+	return RRrotation(temp);
+}
+
+template <typename T>
+typename AVLSet<T>::Node* AVLSet<T>::RLrotation(Node* head) const
+{
+	Node* temp;
+	temp = RRrotation(head->right);
+	return LLrotation(temp);
 }
 
 
@@ -291,6 +359,32 @@ unsigned int AVLSet<T>::sizeAVL(Node* curr) const
     	return 0;
     else
     	return (sizeAVL(curr->left) + sizeAVL(curr->right) + 1);
+}
+
+template <typename T>
+bool AVLSet<T>::see(Node* curr, const T& element) const
+{
+	if ( curr == nullptr )
+	{
+		
+	}
+	else
+	{
+		if (curr->key_value == element)
+		{
+			return true;
+		}
+		if (curr->key_value > element)
+		{
+			if (see(curr->left, element) == true) return true;
+		}
+		else
+		{
+			if (see(curr->right, element) == true) return true;
+		}
+	}
+	return false;
+
 }
 
 template <typename T>

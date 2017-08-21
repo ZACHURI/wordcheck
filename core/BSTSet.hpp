@@ -17,6 +17,8 @@
 #define BSTSET_HPP
 
 #include "Set.hpp"
+#include <algorithm>
+#include <iostream>
 
 
 
@@ -80,6 +82,7 @@ private:
 
 	void copyBST(Node*& newtree, Node* oldtree);
 	void destroyBST(Node* head);
+	bool see(Node* curr, const T& element) const;
 
 	unsigned int size(Node* curr) const;
 
@@ -172,8 +175,8 @@ void BSTSet<T>::add(const T& element)
 				temp = temp->right;
 			}
 		}
-		if (res->key_value > element) head->left = new Node{element, nullptr, nullptr};
-		if (res->key_value < element) head->right = new Node{element, nullptr, nullptr};
+		if (res->key_value > element) res->left = new Node{element, nullptr, nullptr};
+		if (res->key_value < element) res->right = new Node{element, nullptr, nullptr};
 	}
 	
 }
@@ -182,7 +185,8 @@ void BSTSet<T>::add(const T& element)
 template <typename T>
 bool BSTSet<T>::contains(const T& element) const
 {
-	Node* curr = head;
+	/*Node* curr = head;
+
 	if (curr == nullptr) return false;
 	while (curr != nullptr)
 	{
@@ -201,7 +205,10 @@ bool BSTSet<T>::contains(const T& element) const
 		}
 		
 	}
-	return false;
+	return false;*/
+	return see(head, element);
+
+
 }
 
 template <typename T>
@@ -217,7 +224,9 @@ template <typename T>
 unsigned int BSTSet<T>::size(Node* curr) const
 {
     if (curr == nullptr)
+    {
     	return 0;
+    }
     else
     	return (size(curr->left) + size(curr->right) + 1);
 }
@@ -236,6 +245,35 @@ void BSTSet<T>::copyBST(Node*& newtree, Node* oldtree)
 		copyBST(newtree->right, newtree->right);
 	}
 }
+
+template <typename T>
+bool BSTSet<T>::see(Node* curr, const T& element) const
+{
+	if ( curr == nullptr )
+	{
+		
+	}
+	else
+	{
+		if (curr->key_value == element)
+		{
+			return true;
+		}
+
+		if (curr->key_value > element)
+		{
+			if (see(curr->left, element) == true) return true;
+		}
+		else
+		{
+			if (see(curr->right, element) == true) return true;
+		}
+	}
+	return false;
+
+}
+
+
 
 template <typename T>
 void BSTSet<T>::destroyBST(Node* curr)

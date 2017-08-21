@@ -6,10 +6,24 @@
 // Do whatever you'd like here.  This is intended to allow you to experiment
 // with your code, outside of the context of the broader program or Google
 // Test.
+#include "HashSet.hpp"
+#include "AVLSet.hpp"
+#include "BSTSet.hpp"
+#include <iostream>
+#include <string>
+#include <cstring>
+#include <vector>
+#include "Set.hpp"
+#include <algorithm>
+#include <iostream>
+#include <iterator>
 
 
 int main()
 {
+	std::cout << "loli" << std::endl;
+
+
 
 
     return 0;

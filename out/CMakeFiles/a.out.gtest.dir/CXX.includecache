@@ -9,13 +9,25 @@
 ../core/AVLSet.hpp
 Set.hpp
 ../core/Set.hpp
+algorithm
+-
+iostream
+-
 
 ../core/BSTSet.hpp
 Set.hpp
 ../core/Set.hpp
+algorithm
+-
+iostream
+-
 
 ../core/HashSet.hpp
 functional
+-
+algorithm
+-
+iostream
 -
 Set.hpp
 ../core/Set.hpp
@@ -27,13 +39,23 @@ Set.hpp
 ../core/WordChecker.hpp
 string
 -
+cstring
+-
 vector
 -
 Set.hpp
 ../core/Set.hpp
+algorithm
+-
+iostream
+-
+iterator
+-
 
 ../provided/ListSet.hpp
 algorithm
+-
+iostream
 -
 Set.hpp
 ../provided/Set.hpp

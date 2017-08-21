@@ -24,6 +24,8 @@
 #define HASHSET_HPP
 
 #include <functional>
+#include <algorithm>
+#include <iostream>
 #include "Set.hpp"
 
 
@@ -98,6 +100,7 @@ private:
     Node** hashtable;
 
     unsigned int curr_capacity;
+    unsigned int curr_size;
 
     void copyHT(const HashSet& s);
     void destroyHT();
@@ -109,6 +112,8 @@ template <typename T>
 HashSet<T>::HashSet(HashFunction hashFunction)
     : hashFunction{hashFunction}, hashtable{new Node*[DEFAULT_CAPACITY]{nullptr}}
 {
+	curr_size = 0;
+	curr_capacity = DEFAULT_CAPACITY;
 }
 
 
@@ -168,7 +173,6 @@ bool HashSet<T>::isImplemented() const
 template <typename T>
 void HashSet<T>::add(const T& element)
 {
-    
 
     if (contains(element) == false)
     {
@@ -198,9 +202,11 @@ void HashSet<T>::add(const T& element)
 		    }
 		    hashtable = new_hashtable;
 
+		    curr_capacity = new_capacity;
+
 
     	}
-        unsigned int key_value = hashFunction(element);
+        unsigned int key_value = hashFunction(element)%curr_capacity;
         if (hashtable[key_value] == nullptr)
         {
         	hashtable[key_value] = new Node{element, nullptr};
@@ -210,6 +216,7 @@ void HashSet<T>::add(const T& element)
         	Node* next = hashtable[key_value];
         	hashtable[key_value] = new Node{element, next};
         }
+        ++curr_size;
 
     }
 }
@@ -218,7 +225,7 @@ void HashSet<T>::add(const T& element)
 template <typename T>
 bool HashSet<T>::contains(const T& element) const
 {
-    Node* curr;
+    /*Node* curr;
     for ( unsigned int i=0; i < curr_capacity; ++i)
     {
         curr = hashtable[i];
@@ -229,6 +236,20 @@ bool HashSet<T>::contains(const T& element) const
             curr = curr->next;
         }
     }
+    return false;*/
+    unsigned int index = hashFunction(element)%curr_capacity;
+    Node* temp = hashtable[index];
+    while (temp)
+    {
+        if (temp->key == element)
+        {
+            return true;
+        }
+        std::cout << temp->key << std::endl;
+        std::cout << element << std::endl;
+        temp = temp->next;
+    }
+    //return hashtable[index].exists(element) != -1
     return false;
 }
 
@@ -236,18 +257,8 @@ bool HashSet<T>::contains(const T& element) const
 template <typename T>
 unsigned int HashSet<T>::size() const
 {
-    unsigned int count = 0;
-    Node* curr;
-    for ( unsigned int i=0; i < curr_capacity; ++i)
-    {
-        curr = hashtable[i];
-        while (curr != nullptr)
-        {
-            ++count;
-            curr = curr->next;
-        }
-    }
-    return count;
+    
+    return curr_size;
 }
 
 template <typename T>
